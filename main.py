@@ -33,13 +33,19 @@ class Snake:
 
     def update(self):
         # Move the snake
-        for i in range(1, len(self.body)):
-        	self.body[len(self.body) - i] = self.body[len(self.body) - 1 - i].copy()
-        self.body[0][0] += self.direction[0]
-        self.body[0][1] += self.direction[1]
+        for i in range(len(self.body) - 1):
+        	self.body[i] = self.body[i + 1].copy()
+        self.body[len(self.body) - 1][0] += self.direction[0]
+        self.body[len(self.body) - 1][1] += self.direction[1]
         # Check if we need to bounce of right edge
-        if self.body[0][0] < 0 or self.body[0][0] > (SCREEN_HEIGHT / BLOCK_SIZE) - 1 or self.body[0][1] < 0 or self.body[0][1] > (SCREEN_WIDTH / BLOCK_SIZE) - 1:
+        if self.body[len(self.body) - 1][0] < 0 or self.body[len(self.body) - 1][0] > (SCREEN_HEIGHT / BLOCK_SIZE) - 1 or self.body[len(self.body) - 1][1] < 0 or self.body[len(self.body) - 1][1] > (SCREEN_WIDTH / BLOCK_SIZE) - 1:
         	pass #DEATH
+
+    def extention(self):
+    	temp = [0, 0]
+    	temp[0] = self.body[len(self.body) - 1][0] + self.direction[0]
+    	temp[1] = self.body[len(self.body) - 1][1] + self.direction[1]
+    	self.body.append(temp)
         
     def food(self):
     	pass
@@ -63,14 +69,14 @@ class MyGame(arcade.Window):
     def __init__(self, width, height, title, update_rate):
         super().__init__(width, height, title, update_rate = update_rate)
 
-        # Create our rectangle
-        self.snake = Snake([[0, 2], [0, 1], [0, 0]], [0, 1])
+        # Create our snake
+        self.snake = Snake([[0, 0], [0, 1], [0, 2]], [0, 1])
 
         # Set background color
         self.background_color = BACKGROUND_COLOR
 
     def on_update(self, delta_time):
-        # Move the rectangle
+        # Move the snake
         self.snake.update()
 
     def on_key_press(self, symbol, modifiers):
@@ -82,13 +88,15 @@ class MyGame(arcade.Window):
     		self.snake.direction = [0, 1]
     	if symbol == arcade.key.S or symbol == arcade.key.DOWN:
     		self.snake.direction = [0, -1]
+    	if symbol == arcade.key.P:
+    		self.snake.extention()
 
     def on_draw(self):
         """ Render the screen. """
 
         # Clear screen
         self.clear()
-        # Draw the rectangle
+        # Draw the snake
         self.snake.draw()
 
 
